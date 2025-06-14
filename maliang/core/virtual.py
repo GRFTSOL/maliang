@@ -840,7 +840,7 @@ class Widget:
         state: str | None = None,
         *,
         gradient_animation: bool | None = None,
-        nested: bool = True,
+        nested: bool = False,
     ) -> None:
         """Update the widget.
 
@@ -1001,6 +1001,16 @@ class Widget:
 
         for element in self.elements:
             element.forget(value)
+
+    def lift(self) -> None:
+        """Lift the widget to the top."""
+        self.master.widgets.remove(self)
+        self.master.widgets.append(self)
+        for element in self.elements:
+            for item in tuple(element.items):
+                self.master.tag_raise(item)
+        for widget in self.children:
+            widget.lift()
 
     def move(self, dx: float, dy: float) -> None:
         """Move the widget.
